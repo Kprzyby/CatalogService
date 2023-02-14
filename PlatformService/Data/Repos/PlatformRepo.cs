@@ -37,11 +37,9 @@ namespace PlatformService.Data
             return platform;
         }
 
-        public async Task<IEnumerable<Platform>> GetPlatformsAsync()
+        public IQueryable<Platform> GetPlatforms()
         {
-            IEnumerable<Platform> platforms = await _dataContext.Platforms
-                .ToListAsync()
-                .ConfigureAwait(false);
+            IQueryable<Platform> platforms = _dataContext.Platforms;
 
             return platforms;
         }
@@ -62,7 +60,7 @@ namespace PlatformService.Data
             await SaveChangesAsync().ConfigureAwait(false);
         }
 
-        public async Task DeletePlatformByIdAsync(Platform platform)
+        public async Task RemovePlatformAsync(Platform platform)
         {
             _dataContext.Platforms.Remove(platform);
 
