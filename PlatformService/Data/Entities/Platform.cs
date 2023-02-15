@@ -14,6 +14,6 @@ namespace PlatformService.Models
         public double Cost { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime UpdatedDate { get; set; }
-        public DateTime? DelatedDate { get; set; }
+        public DateTime? DeletedDate { get; set; }
     }
 }

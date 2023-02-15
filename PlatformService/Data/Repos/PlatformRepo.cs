@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PlatformService.Models;
-using System.Linq;
 
 namespace PlatformService.Data
 {
@@ -31,42 +30,34 @@ namespace PlatformService.Data
         public async Task<Platform> GetPlatformByIdAsync(int id)
         {
             var platform = await _dataContext.Platforms
-                .SingleOrDefaultAsync(e => e.Id == id)
-                .ConfigureAwait(false);
+                .Where(e => !e.DeletedDate.HasValue)
+                .SingleOrDefaultAsync(e => e.Id == id);
 
             return platform;
         }
 
-        public async Task<IEnumerable<Platform>> GetPlatformsAsync()
+        public IQueryable<Platform> GetPlatforms()
         {
-            IEnumerable<Platform> platforms = await _dataContext.Platforms
-                .ToListAsync()
-                .ConfigureAwait(false);
+            IQueryable<Platform> platforms = _dataContext.Platforms
+                .Where(e => e.DeletedDate == null);
 
             return platforms;
         }
 
-        public async Task AddPlatformAsync(Platform platform)
+        public async Task<Platform> AddPlatformAsync(Platform platform)
         {
-            await _dataContext.Platforms.
-                AddAsync(platform)
-                .ConfigureAwait(false);
+            await _dataContext.Platforms.AddAsync(platform);
 
-            await SaveChangesAsync().ConfigureAwait(false);
+            await SaveChangesAsync();
+
+            return platform;
         }
 
         public async Task UpdatePlatformAsync(Platform platform)
         {
             _dataContext.Platforms.Update(platform);
 
-            await SaveChangesAsync().ConfigureAwait(false);
-        }
-
-        public async Task DeletePlatformByIdAsync(Platform platform)
-        {
-            _dataContext.Platforms.Remove(platform);
-
-            await SaveChangesAsync().ConfigureAwait(false);
+            await SaveChangesAsync();
         }
 
         #endregion Methods
