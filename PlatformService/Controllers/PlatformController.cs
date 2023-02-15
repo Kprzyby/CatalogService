@@ -32,8 +32,7 @@ namespace PlatformService.Controllers
         /// <returns>A platform with a specified id</returns>
         /// <response code="200">Object containing information about the platform</response>
         /// <response code="404">Error message</response>
-        [HttpGet]
-        [Route("Platform/GetPlatformAsync/{id}")]
+        [HttpGet("Platform/GetPlatformAsync/{id}", Name = "GetPlatformAsync")]
         [ProducesResponseType(typeof(ReadPlatformDTO), 200)]
         [ProducesResponseType(typeof(string), 404)]
         public async Task<IActionResult> GetPlatformAsync(int id)
@@ -74,12 +73,12 @@ namespace PlatformService.Controllers
         /// Asynchronous method for adding a platform
         /// </summary>
         /// <param name="newPlatform">Object containing information about the new platform</param>
-        /// <returns>String containing information about the result of the operation</returns>
-        /// <response code="201">Success message</response>
+        /// <returns>New platform and a link to that resource</returns>
+        /// <response code="201">Object containing information about the platform</response>
         /// <response code="500">Error message</response>
         [HttpPost]
         [Route("Platform/AddPlatformAsync")]
-        [ProducesResponseType(typeof(string), 201)]
+        [ProducesResponseType(typeof(ReadPlatformDTO), 201)]
         [ProducesResponseType(typeof(string), 500)]
         public async Task<IActionResult> AddPlatformAsync(CreatePlatformViewModel newPlatform)
         {
@@ -90,14 +89,14 @@ namespace PlatformService.Controllers
                 Cost = newPlatform.Cost
             };
 
-            bool result = await _platformService.AddPlatformAsync(dto);
+            ReadPlatformDTO result = await _platformService.AddPlatformAsync(dto);
 
-            if (result == false)
+            if (result == null)
             {
                 return StatusCode(500, "Server error while executing the operation");
             }
 
-            return StatusCode(201, "Platform created successfully");
+            return CreatedAtRoute("GetPlatformAsync", new { id = result.Id }, result);
         }
 
         /// <summary>

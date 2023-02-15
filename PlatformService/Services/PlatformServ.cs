@@ -73,7 +73,7 @@ namespace PlatformService.Services
             }
         }
 
-        public async Task<bool> AddPlatformAsync(AddPlatformDTO dto)
+        public async Task<ReadPlatformDTO> AddPlatformAsync(AddPlatformDTO dto)
         {
             try
             {
@@ -86,13 +86,21 @@ namespace PlatformService.Services
                     UpdatedDate = DateTime.Now
                 };
 
-                await _platformRepo.AddPlatformAsync(newPlatform);
+                newPlatform = await _platformRepo.AddPlatformAsync(newPlatform);
 
-                return true;
+                ReadPlatformDTO result = new ReadPlatformDTO()
+                {
+                    Id = newPlatform.Id,
+                    Name = newPlatform.Name,
+                    Publisher = newPlatform.Publisher,
+                    Cost = newPlatform.Cost
+                };
+
+                return result;
             }
             catch (Exception ex)
             {
-                return false;
+                return null;
             }
         }
 

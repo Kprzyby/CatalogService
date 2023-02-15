@@ -44,11 +44,13 @@ namespace PlatformService.Data
             return platforms;
         }
 
-        public async Task AddPlatformAsync(Platform platform)
+        public async Task<Platform> AddPlatformAsync(Platform platform)
         {
             await _dataContext.Platforms.AddAsync(platform);
 
             await SaveChangesAsync();
+
+            return platform;
         }
 
         public async Task UpdatePlatformAsync(Platform platform)
