@@ -27,9 +27,7 @@ namespace PlatformService.Services
         {
             try
             {
-                Platform platform = await _platformRepo.
-                    GetPlatformByIdAsync(id)
-                    .ConfigureAwait(false);
+                Platform platform = await _platformRepo.GetPlatformByIdAsync(id);
 
                 if (platform == null)
                 {
@@ -65,8 +63,7 @@ namespace PlatformService.Services
                         Publisher = e.Publisher,
                         Cost = e.Cost
                     })
-                    .ToListAsync()
-                    .ConfigureAwait(false);
+                    .ToListAsync();
 
                 return platforms;
             }
@@ -89,9 +86,7 @@ namespace PlatformService.Services
                     UpdatedDate = DateTime.Now
                 };
 
-                await _platformRepo.
-                    AddPlatformAsync(newPlatform)
-                    .ConfigureAwait(false);
+                await _platformRepo.AddPlatformAsync(newPlatform);
 
                 return true;
             }
@@ -106,8 +101,7 @@ namespace PlatformService.Services
             try
             {
                 Platform oldPlatform = await _platformRepo.
-                    GetPlatformByIdAsync(dto.Id)
-                    .ConfigureAwait(false);
+                    GetPlatformByIdAsync(dto.Id);
 
                 if (oldPlatform == null)
                 {
@@ -119,9 +113,7 @@ namespace PlatformService.Services
                 oldPlatform.Cost = dto.Cost;
                 oldPlatform.UpdatedDate = DateTime.Now;
 
-                await _platformRepo.
-                    UpdatePlatformAsync(oldPlatform)
-                    .ConfigureAwait(false);
+                await _platformRepo.UpdatePlatformAsync(oldPlatform);
 
                 return true;
             }
@@ -136,17 +128,16 @@ namespace PlatformService.Services
             try
             {
                 Platform platform = await _platformRepo.
-                        GetPlatformByIdAsync(id)
-                        .ConfigureAwait(false);
+                        GetPlatformByIdAsync(id);
 
                 if (platform == null)
                 {
                     return false;
                 }
 
-                await _platformRepo.
-                    RemovePlatformAsync(platform)
-                    .ConfigureAwait(false);
+                platform.DeletedDate = DateTime.Now;
+
+                await _platformRepo.UpdatePlatformAsync(platform);
 
                 return true;
             }
