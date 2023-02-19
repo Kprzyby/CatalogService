@@ -8,6 +8,17 @@ builder.Host.ConfigureAppConfiguration((hostingContext, config) =>
 {
     var env = hostingContext.HostingEnvironment;
 
+    if (env.IsProduction())
+    {
+        builder.Services.AddDbContext<DataContext>(options =>
+            options.UseSqlServer(builder.Configuration.GetConnectionString("K8SDBConnection")));
+    }
+    else
+    {
+        builder.Services.AddDbContext<DataContext>(options =>
+            options.UseSqlServer(builder.Configuration.GetConnectionString("DBConnection")));
+    }
+
     config.SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true) //load base settings
                 .AddJsonFile("appsettings.local.json", optional: true, reloadOnChange: true) //load local settings
@@ -26,9 +37,6 @@ builder.Services.AddSwaggerGen(options =>
     options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
 
-builder.Services.AddDbContext<DataContext>(options =>
-options.UseSqlServer(builder.Configuration.GetConnectionString("DBConnection")));
-
 builder.Services.AddScoped<PlatformServ>();
 builder.Services.AddScoped<PlatformRepo>();
 
@@ -39,6 +47,11 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+}
+
+if (app.Environment.IsProduction())
+{
+    DBPrep.ApplyMigrations(app);
 }
 
 app.UseHttpsRedirection();
