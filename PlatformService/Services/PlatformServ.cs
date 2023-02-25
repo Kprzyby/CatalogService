@@ -1,7 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
-using PlatformService.Data;
+﻿using PlatformService.Data;
 using PlatformService.Data.DTOs;
+using PlatformService.Helpers;
 using PlatformService.Models;
+using X.PagedList;
 
 namespace PlatformService.Services
 {
@@ -50,12 +51,53 @@ namespace PlatformService.Services
             }
         }
 
-        public async Task<List<ReadPlatformDTO>> GetPlatformsAsync()
+        public async Task<ReadPlatformsResponseDTO> GetPlatformsAsync(PlatformsFilteringDTO filteringInfo)
         {
             try
             {
-                List<ReadPlatformDTO> platforms = await _platformRepo.
-                    GetPlatforms()
+                IQueryable<Platform> platforms = _platformRepo.GetPlatforms();
+
+                if (String.IsNullOrEmpty(filteringInfo.NameFilterValue) == false)
+                {
+                    platforms = platforms
+                        .Where(p => p.Name
+                        .ToUpper()
+                        .StartsWith(filteringInfo.NameFilterValue.ToUpper()));
+                }
+
+                if (String.IsNullOrEmpty(filteringInfo.PublisherFilterValue) == false)
+                {
+                    platforms = platforms
+                        .Where(p => p.Publisher
+                        .ToUpper()
+                        .StartsWith(filteringInfo.PublisherFilterValue.ToUpper()));
+                }
+
+                if (filteringInfo.MaxCostFilterValue != null)
+                {
+                    platforms = platforms
+                        .Where(p => p.Cost <= filteringInfo.MaxCostFilterValue);
+                }
+
+                if (filteringInfo.SortInfo != null && filteringInfo.SortInfo.Count > 0)
+                {
+                    platforms = SortingHelper<Platform>.Sort(platforms, filteringInfo.SortInfo);
+                }
+                else
+                {
+                    platforms = platforms.OrderBy(p => p.Name);
+                }
+
+                ReadPlatformsResponseDTO result = new ReadPlatformsResponseDTO();
+                result.TotalCount = platforms.Count();
+                result.PageSize = filteringInfo.PageSize;
+                result.PageNumber = filteringInfo.PageNumber;
+                result.SortInfo = filteringInfo.SortInfo;
+                result.NameFilterValue = filteringInfo.NameFilterValue;
+                result.PublisherFilterValue = filteringInfo.PublisherFilterValue;
+                result.MaxCostFilterValue = filteringInfo.MaxCostFilterValue;
+
+                result.Platforms = await platforms
                     .Select(e => new ReadPlatformDTO()
                     {
                         Id = e.Id,
@@ -63,9 +105,9 @@ namespace PlatformService.Services
                         Publisher = e.Publisher,
                         Cost = e.Cost
                     })
-                    .ToListAsync();
+                    .ToPagedListAsync(filteringInfo.PageNumber, filteringInfo.PageSize);
 
-                return platforms;
+                return result;
             }
             catch (Exception ex)
             {
