@@ -50,16 +50,36 @@ namespace PlatformService.Controllers
         /// <summary>
         /// Asynchronous method for loading all platforms
         /// </summary>
-        /// <returns>A list of objects containing information about each platform</returns>
-        /// <response code="200">A list of objects containing information about each platform</response>
+        /// <param name="filteringInfo">Object containing information about the paging, filtering and order</param>
+        /// <remarks>
+        /// The number of the first page is 1 and the minimal size of the page is also 1.
+        ///
+        /// The "SortInfo" parameter's keys should be "Name"/"Publiher"/"Cost" and their respective values - "asc" or "desc" depending on the desired sort order for this property.
+        /// The KeyValuePairs should be added in the order you want the data to be sorted.
+        /// If this parameter is not provided, the platforms will be sorted by name ascendingly.
+        ///
+        /// This method returns all platforms staring with the value of the "NameFilterValue" and/or "PublisherFilterValue" parameter (not case sensitive).
+        /// </remarks>
+        /// <returns>Object containing a list of platforms along with information about paging, filtering and order</returns>
+        /// <response code="200">Object containing a list of platforms along with information about paging, filtering and order</response>
         /// <response code="500">Error message</response>
         [HttpGet]
         [Route("Platform/GetPlatformsAsync")]
-        [ProducesResponseType(typeof(List<ReadPlatformDTO>), 200)]
+        [ProducesResponseType(typeof(ReadPlatformsResponseDTO), 200)]
         [ProducesResponseType(typeof(string), 500)]
-        public async Task<IActionResult> GetPlatformsAsync()
+        public async Task<IActionResult> GetPlatformsAsync(ReadPlatformsViewModel filteringInfo)
         {
-            List<ReadPlatformDTO> result = await _platformService.GetPlatformsAsync();
+            PlatformsFilteringDTO dto = new PlatformsFilteringDTO()
+            {
+                PageSize = filteringInfo.PageSize,
+                PageNumber = filteringInfo.PageNumber,
+                SortInfo = filteringInfo.SortInfo,
+                NameFilterValue = filteringInfo.NameFilterValue,
+                PublisherFilterValue = filteringInfo.PublisherFilterValue,
+                MaxCostFilterValue = filteringInfo.MaxCostFilterValue
+            };
+
+            var result = await _platformService.GetPlatformsAsync(dto);
 
             if (result == null)
             {
