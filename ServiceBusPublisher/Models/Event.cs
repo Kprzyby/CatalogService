@@ -4,7 +4,7 @@
     {
         #region Constructors
 
-        public Event()
+        protected Event()
         {
             EventId = Guid.NewGuid();
             CreatedDate = DateTime.Now;

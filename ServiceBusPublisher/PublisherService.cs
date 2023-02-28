@@ -31,7 +31,9 @@ namespace ServiceBusPublisher
             message.ApplicationProperties.Add("serviceName", "Platform");
             message.ContentType = "application/json";
             message.Subject = eventType.ToString();
-            message.Body = new BinaryData(Encoding.UTF8.GetBytes(JsonSerializer.Serialize(platformEvent)));
+
+            string jsonMessageBody = JsonSerializer.Serialize(platformEvent, platformEvent.GetType());
+            message.Body = new BinaryData(Encoding.UTF8.GetBytes(jsonMessageBody));
 
             await _senderClient.SendMessageAsync(message);
         }

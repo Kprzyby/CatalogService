@@ -3,6 +3,8 @@ using PlatformService.Data.DTOs;
 using PlatformService.Services;
 using PlatformService.ViewModels;
 using ServiceBusPublisher;
+using ServiceBusPublisher.Enums;
+using ServiceBusPublisher.Models;
 
 namespace PlatformService.Controllers
 {
@@ -119,6 +121,16 @@ namespace PlatformService.Controllers
                 return StatusCode(500, "Server error while executing the operation");
             }
 
+            PlatformCreatedEvent createdEvent = new PlatformCreatedEvent()
+            {
+                PlatformId = result.Id,
+                Name = result.Name,
+                Publisher = result.Publisher,
+                Cost = result.Cost
+            };
+
+            await _publisherService.PublishMessageAsync(createdEvent, EventType.PLATFORM_CREATED);
+
             return CreatedAtRoute("GetPlatformAsync", new { id = result.Id }, result);
         }
 
@@ -151,6 +163,16 @@ namespace PlatformService.Controllers
                 return StatusCode(500, "Server error while executing the operation");
             }
 
+            PlatformUpdatedEvent updatedEvent = new PlatformUpdatedEvent()
+            {
+                PlatformId = dto.Id,
+                Name = dto.Name,
+                Publisher = dto.Publisher,
+                Cost = dto.Cost
+            };
+
+            await _publisherService.PublishMessageAsync(updatedEvent, EventType.PLATFORM_UPDATED);
+
             return StatusCode(204);
         }
 
@@ -173,6 +195,13 @@ namespace PlatformService.Controllers
             {
                 return StatusCode(500, "Server error while executing the operation");
             }
+
+            PlatformRemovedEvent removedEvent = new PlatformRemovedEvent()
+            {
+                PlatformId = id
+            };
+
+            await _publisherService.PublishMessageAsync(removedEvent, EventType.PLATFORM_REMOVED);
 
             return StatusCode(204);
         }
