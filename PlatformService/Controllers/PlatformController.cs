@@ -2,6 +2,7 @@
 using PlatformService.Data.DTOs;
 using PlatformService.Services;
 using PlatformService.ViewModels;
+using ServiceBusPublisher;
 
 namespace PlatformService.Controllers
 {
@@ -10,9 +11,10 @@ namespace PlatformService.Controllers
     {
         #region Constructors
 
-        public PlatformController(PlatformServ platformService)
+        public PlatformController(PlatformServ platformService, PublisherService publisherService)
         {
             _platformService = platformService;
+            _publisherService = publisherService;
         }
 
         #endregion Constructors
@@ -20,6 +22,7 @@ namespace PlatformService.Controllers
         #region Properties
 
         private readonly PlatformServ _platformService;
+        private readonly PublisherService _publisherService;
 
         #endregion Properties
 
