@@ -1,6 +1,8 @@
+using Azure.Messaging.ServiceBus;
 using Microsoft.EntityFrameworkCore;
 using PlatformService.Data;
 using PlatformService.Services;
+using ServiceBusPublisher;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,6 +41,20 @@ builder.Services.AddSwaggerGen(options =>
 
 builder.Services.AddScoped<PlatformServ>();
 builder.Services.AddScoped<PlatformRepo>();
+
+//ServiceBus Dependency Injection
+
+string serviceBusConnectionString = builder.Configuration.GetConnectionString("ServiceBusConnection");
+string topicName = builder.Configuration.GetValue<string>("ServiceBus:TopicName");
+
+ServiceBusClient serviceBusClient = new ServiceBusClient(serviceBusConnectionString);
+
+builder.Services.AddSingleton<ServiceBusSender>(e =>
+{
+    return serviceBusClient.CreateSender(topicName);
+});
+
+builder.Services.AddSingleton<PublisherService>();
 
 var app = builder.Build();
 
