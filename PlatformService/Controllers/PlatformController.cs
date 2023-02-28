@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PlatformService.Data.DTOs;
+using PlatformService.Models;
 using PlatformService.Services;
 using PlatformService.ViewModels;
 using ServiceBusPublisher;
@@ -13,10 +14,11 @@ namespace PlatformService.Controllers
     {
         #region Constructors
 
-        public PlatformController(PlatformServ platformService, PublisherService publisherService)
+        public PlatformController(PlatformServ platformService, PublisherService publisherService, ILogger<Platform> logger)
         {
             _platformService = platformService;
             _publisherService = publisherService;
+            _logger = logger;
         }
 
         #endregion Constructors
@@ -25,6 +27,7 @@ namespace PlatformService.Controllers
 
         private readonly PlatformServ _platformService;
         private readonly PublisherService _publisherService;
+        private readonly ILogger<Platform> _logger;
 
         #endregion Properties
 
@@ -129,7 +132,13 @@ namespace PlatformService.Controllers
                 Cost = result.Cost
             };
 
-            await _publisherService.PublishMessageAsync(createdEvent, EventType.PLATFORM_CREATED);
+            bool messageResult = await _publisherService.PublishMessageAsync(createdEvent, EventType.PLATFORM_CREATED);
+
+            if (messageResult == false)
+            {
+                _logger.LogError("Error while publishing message for a platform with id:" +
+                    " " + result.Id + " at " + createdEvent.CreatedDate.ToString());
+            }
 
             return CreatedAtRoute("GetPlatformAsync", new { id = result.Id }, result);
         }
@@ -171,7 +180,13 @@ namespace PlatformService.Controllers
                 Cost = dto.Cost
             };
 
-            await _publisherService.PublishMessageAsync(updatedEvent, EventType.PLATFORM_UPDATED);
+            bool messageResult = await _publisherService.PublishMessageAsync(updatedEvent, EventType.PLATFORM_UPDATED);
+
+            if (messageResult == false)
+            {
+                _logger.LogError("Error while publishing message for a platform with id:" +
+                    " " + id + " at " + updatedEvent.CreatedDate.ToString());
+            }
 
             return StatusCode(204);
         }
@@ -201,7 +216,13 @@ namespace PlatformService.Controllers
                 PlatformId = id
             };
 
-            await _publisherService.PublishMessageAsync(removedEvent, EventType.PLATFORM_REMOVED);
+            bool messageResult = await _publisherService.PublishMessageAsync(removedEvent, EventType.PLATFORM_REMOVED);
+
+            if (messageResult == false)
+            {
+                _logger.LogError("Error while publishing message for a platform with id:" +
+                    " " + id + " at " + removedEvent.CreatedDate.ToString());
+            }
 
             return StatusCode(204);
         }

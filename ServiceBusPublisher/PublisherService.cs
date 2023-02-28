@@ -25,17 +25,26 @@ namespace ServiceBusPublisher
 
         #region Methods
 
-        public async Task PublishMessageAsync(Event platformEvent, EventType eventType)
+        public async Task<bool> PublishMessageAsync(Event platformEvent, EventType eventType)
         {
-            ServiceBusMessage message = new ServiceBusMessage();
-            message.ApplicationProperties.Add("serviceName", "Platform");
-            message.ContentType = "application/json";
-            message.Subject = eventType.ToString();
+            try
+            {
+                ServiceBusMessage message = new ServiceBusMessage();
+                message.ApplicationProperties.Add("serviceName", "Platform");
+                message.ContentType = "application/json";
+                message.Subject = eventType.ToString();
 
-            string jsonMessageBody = JsonSerializer.Serialize(platformEvent, platformEvent.GetType());
-            message.Body = new BinaryData(Encoding.UTF8.GetBytes(jsonMessageBody));
+                string jsonMessageBody = JsonSerializer.Serialize(platformEvent, platformEvent.GetType());
+                message.Body = new BinaryData(Encoding.UTF8.GetBytes(jsonMessageBody));
 
-            await _senderClient.SendMessageAsync(message);
+                await _senderClient.SendMessageAsync(message);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
         }
 
         #endregion Methods
