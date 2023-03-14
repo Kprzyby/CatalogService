@@ -8,6 +8,7 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY ["PlatformService/PlatformService.csproj", "PlatformService/"]
+COPY ["Data/Data.csproj", "Data/"]
 COPY ["ServiceBusPublisher/ServiceBusPublisher.csproj", "ServiceBusPublisher/"]
 RUN dotnet restore "PlatformService/PlatformService.csproj"
 COPY . .
