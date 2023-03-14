@@ -9,7 +9,7 @@ using PlatformService.Data;
 
 #nullable disable
 
-namespace PlatformService.Migrations
+namespace PlatformService.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
     [Migration("20230215140844_AddPlatformEntity")]

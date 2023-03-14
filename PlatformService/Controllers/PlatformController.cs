@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PlatformService.Data.DTOs;
-using PlatformService.Models;
+using PlatformService.Data.Entities;
 using PlatformService.Services;
 using PlatformService.ViewModels;
 using ServiceBusPublisher;

@@ -1,7 +1,8 @@
 ﻿using PlatformService.Data;
 using PlatformService.Data.DTOs;
+using PlatformService.Data.Entities;
+using PlatformService.Data.Repos;
 using PlatformService.Helpers;
-using PlatformService.Models;
 using X.PagedList;
 
 namespace PlatformService.Services

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace PlatformService.Models
+namespace PlatformService.Data.Entities
 {
     public class Platform
     {

@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace PlatformService.Migrations
+namespace PlatformService.Data.Migrations
 {
     /// <inheritdoc />
     public partial class RenameDeletedDate : Migration

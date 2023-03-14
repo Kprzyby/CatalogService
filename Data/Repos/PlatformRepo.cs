@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using PlatformService.Models;
+using PlatformService.Data.Entities;
 
-namespace PlatformService.Data
+namespace PlatformService.Data.Repos
 {
     public class PlatformRepo
     {

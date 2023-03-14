@@ -29,6 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Data\Data.csproj" />
     <ProjectReference Include="..\ServiceBusPublisher\ServiceBusPublisher.csproj" />
   </ItemGroup>
 

@@ -1,6 +1,7 @@
 using Azure.Messaging.ServiceBus;
 using Microsoft.EntityFrameworkCore;
 using PlatformService.Data;
+using PlatformService.Data.Repos;
 using PlatformService.Services;
 using ServiceBusPublisher;
 
