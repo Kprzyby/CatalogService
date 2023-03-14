@@ -71,7 +71,7 @@ namespace PlatformService.Controllers
         /// <returns>Object containing a list of platforms along with information about paging, filtering and order</returns>
         /// <response code="200">Object containing a list of platforms along with information about paging, filtering and order</response>
         /// <response code="500">Error message</response>
-        [HttpGet]
+        [HttpPost]
         [Route("Platform/GetPlatformsAsync")]
         [ProducesResponseType(typeof(ReadPlatformsResponseDTO), 200)]
         [ProducesResponseType(typeof(string), 500)]
